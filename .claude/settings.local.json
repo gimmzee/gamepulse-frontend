@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/PC/projects/**)",
+      "Bash(npx create-react-app:*)",
+      "Bash(cp -r /c/Users/PC/projects/gamepulse-frontend-tmp/node_modules /c/Users/PC/projects/gamepulse-frontend/)",
+      "Bash(cp /c/Users/PC/projects/gamepulse-frontend-tmp/package.json /c/Users/PC/projects/gamepulse-frontend/)",
+      "Bash(cp /c/Users/PC/projects/gamepulse-frontend-tmp/package-lock.json /c/Users/PC/projects/gamepulse-frontend/)",
+      "Bash(cp -r /c/Users/PC/projects/gamepulse-frontend-tmp/public /c/Users/PC/projects/gamepulse-frontend/)",
+      "Bash(cp -r /c/Users/PC/projects/gamepulse-frontend-tmp/src /c/Users/PC/projects/gamepulse-frontend/)",
+      "Bash(cp:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(ls:*)",
+      "Bash(npm start:*)"
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gaming-dark text-gaming-text font-sans antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gaming-darker;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gaming-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gaming-accent;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gaming-accent hover:bg-gaming-accent-hover text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 hover:shadow-gaming-glow active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-gaming-card border border-gaming-border hover:border-gaming-accent text-gaming-text font-semibold px-5 py-2.5 rounded-lg transition-all duration-200;
+  }
+
+  .game-card {
+    @apply bg-card-gradient border border-gaming-border rounded-xl overflow-hidden transition-all duration-300 hover:border-gaming-accent hover:shadow-gaming-hover hover:-translate-y-1 cursor-pointer;
+  }
+
+  .badge-discount {
+    @apply bg-gaming-green text-white text-xs font-bold px-2 py-0.5 rounded-full;
+  }
+
+  .badge-lowest {
+    @apply bg-gaming-purple text-white text-xs font-bold px-2 py-0.5 rounded-full;
+  }
+
+  .input-gaming {
+    @apply bg-gaming-card border border-gaming-border rounded-lg px-4 py-2.5 text-gaming-text placeholder-gaming-muted focus:outline-none focus:border-gaming-accent focus:ring-1 focus:ring-gaming-accent transition-all duration-200 w-full;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-gaming-text mb-6 flex items-center gap-2;
+  }
+}

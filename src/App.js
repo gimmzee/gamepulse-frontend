@@ -1,15 +1,39 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import MainPage from "./pages/MainPage";
 import SearchPage from "./pages/SearchPage";
 import GameDetailPage from "./pages/GameDetailPage";
 import RecommendPage from "./pages/RecommendPage";
 
+function getTimeBasedTheme() {
+  const hour = new Date().getHours();
+  return hour >= 6 && hour < 18 ? "light" : "dark";
+}
+
 function App() {
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("gp-theme");
+      if (saved === "light" || saved === "dark") return saved;
+    } catch {}
+    return getTimeBasedTheme();
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("light-mode", theme === "light");
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    try { localStorage.setItem("gp-theme", next); } catch {}
+  };
+
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gaming-dark">
-        <Navbar />
+        <Navbar theme={theme} onToggleTheme={toggleTheme} />
         <main>
           <Routes>
             <Route path="/" element={<MainPage />} />

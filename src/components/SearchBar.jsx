@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AutocompleteInput from "./AutocompleteInput";
 
 export default function SearchBar({ onSearch, placeholder = "게임 제목으로 검색...", initialValue = "" }) {
   const [query, setQuery] = useState(initialValue);
@@ -8,19 +9,21 @@ export default function SearchBar({ onSearch, placeholder = "게임 제목으로
     if (query.trim()) onSearch(query.trim());
   };
 
+  const prependIcon = (
+    <span className="text-gaming-muted text-lg">🔍</span>
+  );
+
   return (
     <form onSubmit={handleSubmit} className="flex gap-3 w-full">
-      <div className="relative flex-1">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gaming-muted text-lg">
-          🔍
-        </span>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={placeholder}
-          className="input-gaming pl-11 text-base py-3"
-        />
-      </div>
+      <AutocompleteInput
+        value={query}
+        onChange={setQuery}
+        onNavigate={() => setQuery("")}
+        placeholder={placeholder}
+        className="flex-1"
+        inputClassName="input-gaming pl-11 text-base py-3"
+        prependIcon={prependIcon}
+      />
       <button type="submit" className="btn-primary whitespace-nowrap">
         검색
       </button>

@@ -2,27 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── CSS 변수: 다크 모드 (기본) ─── */
+:root {
+  --gaming-dark:     10 14 26;     /* #0a0e1a */
+  --gaming-darker:   6 9 18;       /* #060912 */
+  --gaming-card:     17 24 39;     /* #111827 */
+  --gaming-card-alt: 26 34 52;     /* #1a2234 */
+  --gaming-border:   31 41 55;     /* #1f2937 */
+  --gaming-text:     226 232 240;  /* #e2e8f0 */
+  --gaming-muted:    148 163 184;  /* #94a3b8 */
+}
+
+/* ─── CSS 변수: 라이트 모드 ─── */
+.light-mode {
+  --gaming-dark:     248 249 250;  /* #f8f9fa */
+  --gaming-darker:   255 255 255;  /* #ffffff */
+  --gaming-card:     255 255 255;  /* #ffffff */
+  --gaming-card-alt: 248 249 250;  /* #f8f9fa */
+  --gaming-border:   226 232 240;  /* #e2e8f0 */
+  --gaming-text:     26 26 46;     /* #1a1a2e */
+  --gaming-muted:    107 114 128;  /* #6b7280 */
+}
+
+/* 라이트 모드 Navbar 그림자 */
+.light-mode nav {
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08);
+}
+
 @layer base {
   body {
     @apply bg-gaming-dark text-gaming-text font-sans antialiased;
   }
 
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-gaming-darker;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-gaming-border rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gaming-accent;
-  }
+  ::-webkit-scrollbar        { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track  { @apply bg-gaming-darker; }
+  ::-webkit-scrollbar-thumb  { @apply bg-gaming-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gaming-accent; }
 }
 
 @layer components {

@@ -3,6 +3,12 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=${REACT_APP_API_URL}
+# ARG로 받은 값을 ENV로 설정
+# ${REACT_APP_API_URL}이 npm run build 시점에 process.env로 읽힘
+
 RUN npm run build
 
 FROM nginx:alpine

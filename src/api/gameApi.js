@@ -22,6 +22,9 @@ export const getRecommendations = (likedAppIds) =>
 export const getPlatformPrices = (appId) =>
   api.get(`/api/games/${appId}/platform-prices`).then((r) => r.data);
 
+export const getItadHistory = (appId) =>
+  api.get(`/api/games/${appId}/itad-history`).then((r) => r.data);
+
 export const registerAlert = (appId, targetPrice, email) =>
   api
     .post(`/api/games/${appId}/alert`, null, { params: { targetPrice, email } })

@@ -4,7 +4,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import PriceChart from "../components/PriceChart";
 import AlertForm from "../components/AlertForm";
-import { getGame, getGamePrices, getPlatformPrices } from "../api/gameApi";
+import { getGame, getItadHistory, getPlatformPrices } from "../api/gameApi";
 import { formatPrice, formatDate } from "../utils/formatters";
 
 function formatKRW(amount) {
@@ -206,7 +206,7 @@ export default function GameDetailPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    Promise.all([getGame(appId), getGamePrices(appId)])
+    Promise.all([getGame(appId), getItadHistory(appId)])
       .then(([gameData, priceData]) => {
         setGame(gameData);
         setPrices(priceData);

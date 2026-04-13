@@ -19,6 +19,9 @@ export const getRecommendations = (likedAppIds) =>
     .get("/api/games/recommend", { params: { likedAppIds: likedAppIds.join(",") } })
     .then((r) => r.data);
 
+export const getPlatformPrices = (appId) =>
+  api.get(`/api/games/${appId}/platform-prices`).then((r) => r.data);
+
 export const registerAlert = (appId, targetPrice, email) =>
   api
     .post(`/api/games/${appId}/alert`, null, { params: { targetPrice, email } })

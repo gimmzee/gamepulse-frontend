@@ -25,6 +25,15 @@ export const getPlatformPrices = (appId) =>
 export const getItadHistory = (appId) =>
   api.get(`/api/games/${appId}/itad-history`).then((r) => r.data);
 
+export const getStats = () =>
+  api.get("/api/games/admin/stats").then((r) => r.data);
+
+export const getPopularGames = () =>
+  api.get("/api/games/popular").then((r) => r.data);
+
+export const getOnSaleGames = () =>
+  api.get("/api/games/on-sale").then((r) => r.data);
+
 export const registerAlert = (appId, targetPrice, email) =>
   api
     .post(`/api/games/${appId}/alert`, null, { params: { targetPrice, email } })

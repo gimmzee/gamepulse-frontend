@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -36,6 +37,8 @@ const FALLBACK_COLORS = [
   "#a78bfa",
 ];
 
+const DEFAULT_USD_TO_KRW = 1350;
+
 function getPlatformColor(name, fallbackIdx) {
   return (
     PLATFORM_COLORS[name] ??
@@ -52,10 +55,39 @@ function formatXDate(iso) {
 }
 
 function formatKRW(amount) {
+  if (amount === 0) return "무료";
   return `₩${Number(amount).toLocaleString("ko-KR")}`;
 }
 
+function convertToKRW(amount, currency, usdToKrw) {
+  if (currency === "USD") return Math.round(amount * usdToKrw);
+  if (currency === "EUR") return Math.round(amount * usdToKrw * 1.08);
+  return amount;
+}
+
+function getEntryCurrency(entry) {
+  return entry.deal?.price?.currency ?? entry.currency ?? "KRW";
+}
+
+function formatOriginalPrice(rawAmount, currency) {
+  if (currency === "USD") return `USD $${rawAmount.toFixed(2)}`;
+  if (currency === "EUR") return `EUR €${rawAmount.toFixed(2)}`;
+  return null;
+}
+
 export default function PriceChart({ prices }) {
+  const [usdToKrw, setUsdToKrw] = useState(DEFAULT_USD_TO_KRW);
+
+  useEffect(() => {
+    fetch("https://api.exchangerate-api.com/v4/latest/USD")
+      .then((r) => r.json())
+      .then((data) => {
+        const rate = data?.rates?.KRW;
+        if (rate && typeof rate === "number") setUsdToKrw(rate);
+      })
+      .catch(() => {});
+  }, []);
+
   if (!prices || prices.length === 0) {
     return (
       <div className="flex items-center justify-center h-48 text-gaming-muted">
@@ -64,14 +96,20 @@ export default function PriceChart({ prices }) {
     );
   }
 
-  // 플랫폼별로 그룹핑
+  // 플랫폼별로 그룹핑 + 환율 변환
   const platformMap = {};
   prices.forEach((entry) => {
     const name = entry.shop?.name ?? "Unknown";
     if (!platformMap[name]) platformMap[name] = [];
+    const rawAmount = entry.deal?.price?.amount ?? null;
+    const currency = getEntryCurrency(entry);
+    const amount =
+      rawAmount != null ? convertToKRW(rawAmount, currency, usdToKrw) : null;
     platformMap[name].push({
       dateLabel: formatXDate(entry.timestamp),
-      amount: entry.deal?.price?.amount ?? null,
+      amount,
+      rawAmount,
+      currency,
       cut: entry.deal?.cut ?? 0,
     });
   });
@@ -95,7 +133,8 @@ export default function PriceChart({ prices }) {
     return {
       label: name,
       data: allLabels.map((d) => byDate.get(d)?.amount ?? null),
-      cuts: allLabels.map((d) => byDate.get(d)?.cut ?? null),
+      // 툴팁용 메타 (Chart.js가 무시하는 커스텀 필드)
+      entryMeta: allLabels.map((d) => byDate.get(d) ?? null),
       borderColor: color,
       backgroundColor: isMultiPlatform ? `${color}12` : `${color}18`,
       borderWidth: 2,
@@ -137,9 +176,18 @@ export default function PriceChart({ prices }) {
           title: (items) => items[0]?.label ?? "",
           label: (ctx) => {
             if (ctx.parsed.y == null) return null;
-            const cut = ctx.dataset.cuts?.[ctx.dataIndex];
+            const meta = ctx.dataset.entryMeta?.[ctx.dataIndex];
+            const cut = meta?.cut;
             let line = `  ${ctx.dataset.label}: ${formatKRW(ctx.parsed.y)}`;
             if (cut > 0) line += `  (-${cut}%)`;
+            if (
+              meta?.currency &&
+              meta.currency !== "KRW" &&
+              meta.rawAmount != null
+            ) {
+              const orig = formatOriginalPrice(meta.rawAmount, meta.currency);
+              if (orig) line += ` (${orig})`;
+            }
             return line;
           },
         },
@@ -157,11 +205,12 @@ export default function PriceChart({ prices }) {
         border: { color: "#1f2937" },
       },
       y: {
+        min: 0,
         grid: { color: "rgba(31, 41, 55, 0.6)" },
         ticks: {
           color: "#94a3b8",
           font: { size: 11 },
-          callback: (v) => formatKRW(v),
+          callback: (v) => (v === 0 ? "무료" : formatKRW(v)),
         },
         border: { color: "#1f2937" },
       },

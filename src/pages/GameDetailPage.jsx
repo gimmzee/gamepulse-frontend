@@ -45,7 +45,9 @@ function PlatformPricesSection({ appId, onDataLoaded }) {
   }
   if (!data) return null;
 
-  const deals = data.prices?.[0]?.deals ?? [];
+  const deals = [...(data.prices?.[0]?.deals ?? [])].sort(
+    (a, b) => (a.price?.amount ?? Infinity) - (b.price?.amount ?? Infinity)
+  );
   const historyLowAmounts = data.prices?.[0]?.historyLow ?? {};
   const historyLowDetail = data.historyLow?.[0]?.low ?? null;
 
@@ -103,7 +105,14 @@ function PlatformPricesSection({ appId, onDataLoaded }) {
                             : "pl-0"
                         }`}
                       >
-                        {deal.shop.name}
+                        <span className="flex items-center gap-2">
+                          {deal.shop.name}
+                          {isCheapest && (
+                            <span className="inline-block bg-gaming-green text-white text-xs font-bold px-2 py-0.5 rounded">
+                              최저가
+                            </span>
+                          )}
+                        </span>
                       </td>
                       <td className="py-3 pr-4 text-right font-bold text-gaming-accent">
                         {displayPrice(deal.price?.amount)}

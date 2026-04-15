@@ -77,6 +77,8 @@ function formatOriginalPrice(rawAmount, currency) {
 
 export default function PriceChart({ prices }) {
   const [usdToKrw, setUsdToKrw] = useState(DEFAULT_USD_TO_KRW);
+  // null = 전체 표시, Set = 선택된 플랫폼만 표시
+  const [selectedPlatforms, setSelectedPlatforms] = useState(null);
 
   useEffect(() => {
     fetch("https://api.exchangerate-api.com/v4/latest/USD")
@@ -130,11 +132,13 @@ export default function PriceChart({ prices }) {
   const datasets = platformNames.map((name, idx) => {
     const color = getPlatformColor(name, idx);
     const byDate = new Map(platformMap[name].map((e) => [e.dateLabel, e]));
+    const isVisible = selectedPlatforms === null || selectedPlatforms.has(name);
     return {
       label: name,
       data: allLabels.map((d) => byDate.get(d)?.amount ?? null),
       // 툴팁용 메타 (Chart.js가 무시하는 커스텀 필드)
       entryMeta: allLabels.map((d) => byDate.get(d) ?? null),
+      hidden: !isVisible,
       borderColor: color,
       backgroundColor: isMultiPlatform ? `${color}12` : `${color}18`,
       borderWidth: 2,
@@ -158,6 +162,24 @@ export default function PriceChart({ prices }) {
       legend: {
         display: true,
         position: "top",
+        onClick: (_e, legendItem) => {
+          const clicked = legendItem.text;
+          setSelectedPlatforms((prev) => {
+            // 전체 표시 상태에서 클릭 → 해당 플랫폼만 선택
+            if (prev === null) return new Set([clicked]);
+
+            const next = new Set(prev);
+            if (next.has(clicked)) {
+              next.delete(clicked);
+              // 선택된 항목이 없어지면 전체 표시로 복원
+              return next.size === 0 ? null : next;
+            } else {
+              next.add(clicked);
+              // 모든 플랫폼이 선택되면 전체 표시로 복원
+              return next.size === platformNames.length ? null : next;
+            }
+          });
+        },
         labels: {
           color: "#94a3b8",
           font: { size: 12 },

@@ -44,8 +44,25 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Set API URL
+        id: api_url
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+          echo "url=https://gamepulselab.vbnmzxc.shop" >> $GITHUB_OUTPUT
+          else
+          echo "url=https://gamepulse.vbnmzxc.shop" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            REACT_APP_API_URL=https://gamepulse.vbnmzxc.shop
+            REACT_APP_API_URL=${{ steps.api_url.outputs.url }}
           # 빌드 시점에 환경변수 주입
           # React는 빌드 타임에 env가 번들에 포함됨
           # 런타임에 바꿀 수 없어서 빌드 시 결정해야 함
